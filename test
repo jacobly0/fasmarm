@@ -1,0 +1,12 @@
+#!/bin/bash
+dir="$(cd $(dirname "$0"); pwd)"
+exec="$dir/fasmarm"
+fasm "$dir/source/Linux/fasmarm.asm" "$exec" &&
+for test in "$dir"/armdoc/*.asm; do
+	test="${test%.asm}"
+	if "$exec" "$test.asm" "$test.out" && diff "$test.out" "$test.bin" >/dev/null; then
+		echo -e "\e[32m$test passed.\e[m"
+	else
+		echo -e "\e[31m$test failed.\e[m"
+	fi | tail --lines=+2
+done
